@@ -2,10 +2,15 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import SideNavBar from "../../../../components/Side_Nav_Bar/SideNavBar";
+import axios from "axios";
 
 const UserCreation: React.FC = () => {
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // 👈 Track visibility
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -22,6 +27,29 @@ const UserCreation: React.FC = () => {
     setPassword(newPassword);
   };
 
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("http://localhost:4001/signup", {
+        firstname,
+        lastname,
+        email,
+        password,
+        role,
+      });
+
+    const { message } = response.data;
+    if (message === "User already exists") {
+      alert("User already exists");
+    } else {
+      alert("Account created")
+    }
+    } catch (error) {
+      console.log("There was an error creating user: ", error);
+      alert("there was an error creating a user. Please try again")
+    }
+    
+  }
+
   return (
     <>
       <Header />
@@ -29,7 +57,7 @@ const UserCreation: React.FC = () => {
         <SideNavBar />
         <div className="flex items-center justify-center mt[-200px] w-full">
           <div className="mx-auto w-full max-w-[550px]">
-            <form action="https://formbold.com/s/FORM_ID" method="POST">
+            <form onSubmit={(e) => e.preventDefault()} method="POST">
               <div className="mb-5">
                 <label
                   htmlFor="name"
@@ -41,6 +69,8 @@ const UserCreation: React.FC = () => {
                   type="text"
                   name="name"
                   id="name"
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
                   placeholder="First Name"
                   className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 />
@@ -56,6 +86,8 @@ const UserCreation: React.FC = () => {
                   type="text"
                   name="subject"
                   id="subject"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
                   placeholder="Last Name"
                   className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 />
@@ -71,6 +103,8 @@ const UserCreation: React.FC = () => {
                   type="email"
                   name="email"
                   id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@domain.com"
                   className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 />
@@ -119,6 +153,8 @@ const UserCreation: React.FC = () => {
                 <select
                   name="role"
                   id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
                   className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 >
                   <option value="">Select a role</option>
@@ -132,7 +168,7 @@ const UserCreation: React.FC = () => {
               </div>
 
               <div>
-                <button className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-base font-semibold text-white outline-none">
+                <button className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-base font-semibold text-white outline-none" onClick={handleSubmit}>
                   Submit
                 </button>
               </div>

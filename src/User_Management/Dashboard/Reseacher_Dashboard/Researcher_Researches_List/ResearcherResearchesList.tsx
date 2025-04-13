@@ -13,7 +13,7 @@ const ResearcherResearchesList: React.FC = () => {
     const navigate = useNavigate();
 
     const uploadResearch = () => {
-        navigate('researcher/research-upload')
+        navigate('/researcher/research-upload')
     }
     return (
       <>
@@ -27,11 +27,11 @@ const ResearcherResearchesList: React.FC = () => {
                   <div className="flex items-center justify-between ">
                     <div>
                       <h3 className="text-lg font-semibold text-slate-800">
-                        Users List
+                        Researches List
                       </h3>
-                      <p className="text-slate-500">
+                      {/* <p className="text-slate-500">
                         Review each person before edit
-                      </p>
+                      </p> */}
                     </div>
                     <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
                       <button

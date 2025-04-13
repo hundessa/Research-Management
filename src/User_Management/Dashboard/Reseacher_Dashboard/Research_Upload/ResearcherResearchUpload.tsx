@@ -11,7 +11,7 @@ const ResearcherResearchUpload: React.FC = () => {
   const [filePreview, setFilePreview] = useState<string | null>(null); // Updated to support any file type
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [researchName, setResearchName] = useState("");
+  const [researchTitle, setResearchTitle] = useState("");
   const [researchType, setResearchType] = useState("");
 
   const allowedFileTypes = ["application/pdf", "application/msword"]; // .pdf and .doc MIME types
@@ -46,7 +46,7 @@ const ResearcherResearchUpload: React.FC = () => {
 
     try {
       // Upload the file to Firebase Storage
-      const storageRef = ref(storage, `categoryFiles/${selectedFile.name}`);
+      const storageRef = ref(storage, `researches/${selectedFile.name}`);
       const uploadTask = uploadBytesResumable(storageRef, selectedFile);
 
       uploadTask.on(
@@ -66,36 +66,40 @@ const ResearcherResearchUpload: React.FC = () => {
           // Get the download URL after upload is successful
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
+          const userId = localStorage.getItem('userId')
+          console.log(userId);
+          
           // Now, send the file URL and other details to the backend
           const formData = {
-            categoryFile: downloadURL, // Send the Firebase file URL
-            researchName,
+            researchFile: downloadURL, // Send the Firebase file URL
+            researchTitle,
             researchType,
+            userId,
           };
 
           const response = await axios.post(
-            "http://localhost:4000/category-creation",
+            "http://localhost:4001/research-upload",
             formData
           );
           const { message } = response.data;
 
-          if (message === "Category created successfully") {
-            alert("Category created successfully");
-          } else if (message === "Category already exists") {
-            setError(message);
+          if (message === "File uploaded successfuly") {
+            alert("File Uploaded Successfully");
+          } else {
+            setError(message.error);
           }
 
           setUploading(false); // End uploading state
         }
       );
     } catch (error) {
-      console.error("There was an error creating category:", error);
+      console.error("There was an error uploading file:", error);
       setUploading(false);
-      alert("There was an error creating category. Please try again.");
+      alert("There was an error uploading file. Please try again.");
     }
 
     // Reset form after successful creation
-    setResearchName("");
+    setResearchTitle("");
     setResearchType("");
     setSelectedFile(null);
     setFilePreview(null);
@@ -122,7 +126,7 @@ const ResearcherResearchUpload: React.FC = () => {
                   name="title"
                   id="title"
                   placeholder="Research Title"
-                  onChange={(e) => setResearchName(e.target.value)}
+                  onChange={(e) => setResearchTitle(e.target.value)}
                   className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 />
               </div>
@@ -148,8 +152,14 @@ const ResearcherResearchUpload: React.FC = () => {
               </div>
 
               <div className="mb-5">
+                <label
+                  htmlFor="role"
+                  className="mb-3 block text-base font-medium text-[#07074D]"
+                >
+                  Upload File
+                </label>
                 <label id="select-file" className="cursor-pointer">
-                  <FaCloudUploadAlt className="cursor-pointer size-8 hover:text-gray-700" />
+                  <FaCloudUploadAlt className="cursor-pointer size-16 hover:text-gray-700 w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
                   <input
                     hidden
                     type="file"
@@ -173,7 +183,7 @@ const ResearcherResearchUpload: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleCreate}
-                  className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-base font-semibold text-white outline-none"
+                  className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-base font-semibold text-white outline-none cursor-pointer"
                   disabled={uploading}
                 >
                   {uploading ? "Uploading..." : "Submit"}

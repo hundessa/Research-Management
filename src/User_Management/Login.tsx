@@ -19,12 +19,15 @@ const Login: React.FC = () => {
             values
           );
 
-          const { message, role } = response.data;
+          const { message, role, user } = response.data;
+          const userID = user.id
+          localStorage.setItem('userId', userID)
+console.log(userID);
 
           if (message === "Login successful") {
             alert("Login successful");
             if (role === "researcher") {
-              navigate("/");
+              navigate("/researcher/dashboard");
             } else if (role === "dean") {
               navigate("/dean-dashboard");
             } else if (role === "coordinator") {
@@ -36,16 +39,25 @@ const Login: React.FC = () => {
             } else if (role === "finance") {
               navigate("/finance-dashboard");
             }
-          } else if (
-            message === "Incorrect password" ||
-            message === "User not found"
-          ) {
-            alert("User or password not correct");
           }
-        } catch (error) {
-          alert("Error signing in");
-          console.log("Error signing up", error);
+        } catch (error: unknown) {
+          if (axios.isAxiosError(error)) {
+            const message = error.response?.data?.message;
+
+            if (
+              message === "Incorrect password" ||
+              message === "User not found"
+            ) {
+              alert("User or password not correct");
+            } else {
+              alert("Error signing in: " + (message || "Unknown error"));
+            }
+          } else {
+            alert("An unexpected error occurred");
+          }
+          console.log("Error signing in", error);
         }
+
 
     }
     return (

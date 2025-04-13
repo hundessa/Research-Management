@@ -20,7 +20,7 @@ const UsersList: React.FC = () => {
         <Header />
         <div className="flex min-h-screen bg-gray-100">
           <SideNavBar />
-          <section className="ml-[10%] mt-[5%]">
+          <section className="ml-[10%] mt-[2%]">
             <div className="flex min-w-[1200px] mx-[10%] mt-12">
               <div className="relative flex flex-col w-full h-full text-slate-700 bg-white shadow-md rounded-xl bg-clip-border">
                 <div className="relative mx-4 mt-4 overflow-hidden text-slate-700 bg-white rounded-none bg-clip-border">
