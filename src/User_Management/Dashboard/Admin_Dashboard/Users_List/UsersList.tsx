@@ -1,20 +1,43 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import SideNavBar from "../../../../components/Side_Nav_Bar/SideNavBar";
-import { users } from "../../../../assets/data/users";
 import { FaTrashAlt } from "react-icons/fa";
 import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import { HiUserAdd } from "react-icons/hi";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 
+interface UsersItem {
+  firstname: string,
+  lastname: string,
+  email: string,
+  role: string,
+  status: string,
+}
 
 const UsersList: React.FC = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+    const [users, setUsers] = useState<UsersItem[]>([]);
 
-    const addUser = () => {
-        navigate('/admin/user-creation')
-    }
+      const addUser = () => {
+          navigate('/admin/user-creation')
+      }
+    
+    useEffect(() => {
+      (async () => {
+        try {
+          const response = await axios.get<UsersItem[]>("http://localhost:4001/admin-users-list");
+            setUsers(response.data)
+        } catch (error) {
+          console.log("error: ", error);
+        
+        }
+      })()
+    }, []);
+
+
     return (
       <>
         <Header />

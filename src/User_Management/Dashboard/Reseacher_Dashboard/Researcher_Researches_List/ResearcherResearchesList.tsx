@@ -3,18 +3,55 @@ import Header from "../../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "../Navigations/ResearcherSideNavbar";
 import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import { HiUpload } from "react-icons/hi";
-import { researches } from "../../../../assets/data/users";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
+
+interface ResearchItem {
+  _id: string;
+  researchTitle: string;
+  researchType: string;
+  status: string;
+  createdAt: string;
+  data: unknown;
+}
 
 
 const ResearcherResearchesList: React.FC = () => {
-
+  
+  const [research, setResearch] = useState<ResearchItem[]>([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+      const fetchResearches = async () => {
+        try {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const researcherId = user?.id;
+
+          if (!researcherId) {
+            throw new Error("Researcher ID not found in localStorage");
+          }
+
+          const response = await axios.get<ResearchItem[]>(
+            `http://localhost:4001/researcher/researches-list?researcherId=${researcherId}`
+          );
+
+          setResearch(response.data.data.reverse());
+        } catch (err) {
+          console.error("Error fetching researches:", err);
+          // Handle error appropriately
+        }
+      };
+
+      fetchResearches();
+    }, []);
+  
     const uploadResearch = () => {
         navigate('/researcher/research-upload')
     }
+  
+  
     return (
       <>
         <Header />
@@ -75,7 +112,7 @@ const ResearcherResearchesList: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {researches.map((research, index) => (
+                      {research.map((research, index) => (
                         <tr key={index}>
                           <td className="p-4 border-b border-slate-200">
                             <div className="flex items-center gap-3">
@@ -87,12 +124,12 @@ const ResearcherResearchesList: React.FC = () => {
                               <div className="flex flex-col">
                                 <p className="text-sm font-semibold text-slate-700 truncate">
                                   {/* {research.researchName} */}
-                                  {research.researchName.length > 50
-                                    ? `${research.researchName.substring(
+                                  {research.researchTitle.length > 50
+                                    ? `${research.researchTitle.substring(
                                         0,
                                         50
                                       )}...`
-                                    : research.researchName}
+                                    : research.researchTitle}
                                 </p>
                                 {/* <p className="text-sm text-slate-500">
                                                       {research.researcheremail}
@@ -111,9 +148,17 @@ const ResearcherResearchesList: React.FC = () => {
                             <div className="w-max">
                               <div
                                 className={`relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap ${
-                                  research.status === "Active"
+                                  research.status === "submitted"
                                     ? "bg-green-600"
-                                    : "bg-red-400 text-slate-500"
+                                    : research.status === "reviewed"
+                                    ? "bg-yellow-400"
+                                    : research.status === "underdefence"
+                                    ? "bg-blue-400"
+                                    : research.status === "finalized"
+                                    ? "bg-violet-400"
+                                    : research.status === "accepted"
+                                    ? "bg-blue-800"
+                                    : "bg-red-400 text-white"
                                 }`}
                               >
                                 <span className="text-white">
@@ -131,6 +176,11 @@ const ResearcherResearchesList: React.FC = () => {
                             <button
                               className="relative cursor-pointer h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-slate-900 transition-all hover:bg-slate-900/10 active:bg-slate-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                               type="button"
+                              onClick={() =>
+                                navigate(
+                                  `/researcher/researches/${research._id}`
+                                )
+                              }
                             >
                               <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                                 <HiPencil className="w-4 h-4" />

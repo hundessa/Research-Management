@@ -21,23 +21,27 @@ const Login: React.FC = () => {
 
           const { message, role, user } = response.data;
           const userID = user.id
-          localStorage.setItem('userId', userID)
+          const userfirstname = user.firstname
+          const userrole = user.role
+          localStorage.setItem('user', JSON.stringify({id: userID, userrole, firstname: userfirstname}))
 console.log(userID);
 
           if (message === "Login successful") {
             alert("Login successful");
-            if (role === "researcher") {
+            if (role === "admin") {
+              navigate("/admin/dashboard");
+            } else if (role === "researcher") {
               navigate("/researcher/dashboard");
             } else if (role === "dean") {
-              navigate("/dean-dashboard");
+              navigate("/dean/dashboard");
             } else if (role === "coordinator") {
-              navigate("/coordinator-dashboard");
+              navigate("/coordinator/dashboard");
             } else if (role === "reviewer") {
-              navigate("/reviewer-dashboard");
+              navigate("/reviewer/dashboard");
             } else if (role === "directorate") {
-              navigate("/directorate-dashboard");
+              navigate("/directorate/dashboard");
             } else if (role === "finance") {
-              navigate("/finance-dashboard");
+              navigate("/finance/dashboard");
             }
           }
         } catch (error: unknown) {

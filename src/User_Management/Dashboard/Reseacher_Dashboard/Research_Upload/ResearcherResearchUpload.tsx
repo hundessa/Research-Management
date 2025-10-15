@@ -66,15 +66,32 @@ const ResearcherResearchUpload: React.FC = () => {
           // Get the download URL after upload is successful
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-          const userId = localStorage.getItem('userId')
-          console.log(userId);
+const storedUser = localStorage.getItem("user");
+
+let userId = "";
+let firstname = "";
+
+if (storedUser) {
+  try {
+    const parsedUser = JSON.parse(storedUser);
+    userId = parsedUser.id;
+    firstname = parsedUser.firstname;
+  } catch (e) {
+    console.error("Error parsing user from localStorage", e);
+  }
+}
+          console.log(userId, firstname);
           
           // Now, send the file URL and other details to the backend
           const formData = {
             researchFile: downloadURL, // Send the Firebase file URL
             researchTitle,
             researchType,
-            userId,
+            status: "submitted",
+            researcher: {
+              id: userId,
+              name: firstname,
+            },
           };
 
           const response = await axios.post(
