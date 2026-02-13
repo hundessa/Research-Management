@@ -4,12 +4,21 @@ import io from "socket.io-client";
 // Create socket connection to the backend
 const socket = io("http://localhost:4001"); // adjust your backend URL
 
-const NotificationContext = createContext<unknown>(null);
+type NotificationContextType = {
+  notifications: Notification[];
+};
+
+const NotificationContext = createContext<NotificationContextType | null>(null);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useNotifications = () => {
-  return useContext(NotificationContext);
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error("useNotifications must be used within NotificationProvider");
+  }
+  return context;
 };
+
 type Notification = {
   id: string;
   title: string;
@@ -49,12 +58,22 @@ export const NotificationProvider = ({
     fetchNotifications();
 
     // 2. Listen for real-time notifications via socket
-    socket.on("new-research-uploaded", (notification) => {
-      setNotifications((prevNotifications) => [
-        notification,
-        ...prevNotifications, // prepend new notifications
-      ]);
-    });
+    // socket.on("new-research-uploaded", (notification) => {
+    //   setNotifications((prevNotifications) => [
+    //     notification,
+    //     ...prevNotifications, // prepend new notifications
+    //   ]);
+    // });
+    socket.on(
+  "new-research-uploaded",
+  (notification: Notification) => {
+    setNotifications((prev) => [
+      notification,
+      ...prev,
+    ]);
+  }
+);
+
 
     return () => {
       socket.off("new-research-uploaded");
