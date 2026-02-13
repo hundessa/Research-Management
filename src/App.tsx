@@ -66,7 +66,7 @@ function App() {
             <Route path="/researcher/researches/:id" element={<ResearcherSingleResearchPage />} />
             <Route path="/researcher/research-upload" element={<ResearcherResearchUpload />} />
             <Route path="/researcher/notification" element={<ResearcherNotification />} />
-            <Route path="/researcher/finance-form" element={<ResearcherFinanceForm researchId={undefined} />} />
+            <Route path="/researcher/finance-form" element={<ResearcherFinanceForm ResearchId={undefined} />} />
             <Route path="/researcher/finance-report" element={<ResearcherFinanceReports />} />
             <Route path="/reviewer/dashboard" element={<ReviewerDashboard />} />
             <Route path="/reviewer/researches-list" element={<ReviewerResearchList />} />

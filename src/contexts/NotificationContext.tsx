@@ -29,7 +29,12 @@ export const NotificationProvider = ({
       try {
         const res = await fetch("http://localhost:4001/admin/notification"); // your route
         const data = await res.json();
-        const formatted = data.map((n: unknown) => ({
+        type BackendNotification = {
+          _id: string;
+          message: string;
+          timestamp: string;
+        };
+        const formatted = (data as BackendNotification[]).map((n) => ({
           id: n._id,
           title: "New Research Uploaded",
           content: n.message,

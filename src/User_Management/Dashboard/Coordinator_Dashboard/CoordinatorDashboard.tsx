@@ -63,9 +63,13 @@ const CoordinatorDashboard: React.FC = () => {
           console.warn("Researches data is not an array, defaulting to empty array");
           setResearches([]);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching dashboard data:", err);
-        setError(err.message || "Failed to load data");
+        setError(
+          typeof err === "object" && err !== null && "message" in err
+            ? (err as { message?: string }).message || "Failed to load data"
+            : "Failed to load data"
+        );
         setReviewers([]);
         setResearches([]);
       } finally {
@@ -97,9 +101,15 @@ const CoordinatorDashboard: React.FC = () => {
         )
       );
       alert("Reviewers assigned successfully");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error assigning reviewers:", err);
-      alert(`Failed to assign reviewers: ${err.message || "Unknown error"}`);
+      alert(
+        `Failed to assign reviewers: ${
+          typeof err === "object" && err !== null && "message" in err
+            ? (err as { message?: string }).message
+            : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -115,9 +125,15 @@ const CoordinatorDashboard: React.FC = () => {
         prev.map((r) => (r._id === researchId ? { ...r, defenseDate } : r))
       );
       alert("Defense date assigned successfully");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error assigning defense date:", err);
-      alert(`Failed to assign defense date: ${err.message || "Unknown error"}`);
+      alert(
+        `Failed to assign defense date: ${
+          typeof err === "object" && err !== null && "message" in err
+            ? (err as { message?: string }).message || "Unknown error"
+            : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -135,9 +151,15 @@ const CoordinatorDashboard: React.FC = () => {
         )
       );
       alert(`Research ${action}ed successfully`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Error ${action}ing research:`, err);
-      alert(`Failed to ${action} research: ${err.message || "Unknown error"}`);
+      alert(
+        `Failed to ${action} research: ${
+          typeof err === "object" && err !== null && "message" in err
+            ? (err as { message?: string }).message || "Unknown error"
+            : "Unknown error"
+        }`
+      );
     }
   };
 

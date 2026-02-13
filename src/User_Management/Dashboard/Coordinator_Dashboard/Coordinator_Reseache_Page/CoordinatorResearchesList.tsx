@@ -35,6 +35,9 @@ const CoordinatorResearchesList: React.FC = () => {
       })();
     }, []);
 
+    if (!research) {
+      return <div>Loading...</div>;
+    }
 
     return (
       <>

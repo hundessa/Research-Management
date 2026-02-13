@@ -44,6 +44,9 @@ const ReviewerResearchList: React.FC = () => {
     }, [reviewerId]);
 
 
+    if (!research) {
+      return <div>Loading...</div>;
+    }
     return (
       <>
         <Header />

@@ -46,7 +46,7 @@ const CoordinatorFinanceRequests = () => {
         }
       );
       setRequests(response.data.data);
-    } catch (error) {
+    } catch {
       message.error("Failed to fetch finance requests");
     } finally {
       setLoading(false);
@@ -82,7 +82,7 @@ const CoordinatorFinanceRequests = () => {
       }
 
       fetchFinanceRequests();
-    } catch (error) {
+    } catch {
       message.error("Failed to approve request");
     } finally {
       setActionLoading(false);
@@ -119,7 +119,7 @@ const CoordinatorFinanceRequests = () => {
       }
 
       fetchFinanceRequests();
-    } catch (error) {
+    } catch {
       message.error("Failed to reject request");
     } finally {
       setActionLoading(false);
@@ -175,12 +175,12 @@ const CoordinatorFinanceRequests = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: FinanceRequest) => (
+      render: (_: unknown, record: FinanceRequest) => (
         <Space size="middle">
           <Button
             type="primary"
             icon={<CheckOutlined />}
-            onClick={() => handleApprove(record._id)}
+            onClick={() => handleApprove(record._id, record.researchId._id, record.researchId.researchTitle)}
             loading={actionLoading}
             disabled={record.status !== "pending"}
           >
@@ -189,7 +189,7 @@ const CoordinatorFinanceRequests = () => {
           <Button
             danger
             icon={<CloseOutlined />}
-            onClick={() => handleReject(record._id)}
+            onClick={() => handleReject(record._id, record.researchId._id, record.researchId.researchTitle, record.researcherId._id)}
             loading={actionLoading}
             disabled={record.status !== "pending"}
           >

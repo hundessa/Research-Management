@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Form, Input, Upload, message, Card, Table, Tag } from "antd";
+import { Button, Form, Input, Upload, message, Card, Table, Tag, UploadFile } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Header from "../../../../components/Header_Nav_Bar/Header";
@@ -33,7 +33,8 @@ const ResearcherFinanceReports = () => {
   const [finances, setFinances] = useState<Finance[]>([]);
   const [reports, setReports] = useState<ProgressReport[]>([]);
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState<any[]>([]);
+  // const [fileList, setFileList] = useState<unknown[]>([]);
+    const [fileList, setFileList] = useState<UploadFile<File>[]>([]);
   const [uploading, setUploading] = useState(false);
   const { researchId } = useParams<{ researchId: string }>();
   const [form] = Form.useForm();
@@ -43,6 +44,7 @@ const ResearcherFinanceReports = () => {
   useEffect(() => {
     fetchFinances();
     fetchReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [researchId]);
 
   const fetchFinances = async () => {
@@ -55,7 +57,7 @@ const ResearcherFinanceReports = () => {
       setFinances(response.data.data);
       console.log("finance datas: ", finances);
       
-    } catch (error) {
+    } catch {
       message.error("Failed to fetch finances");
     } finally {
       setLoading(false);
@@ -69,15 +71,16 @@ const ResearcherFinanceReports = () => {
         { withCredentials: true }
       );
       setReports(response.data.data);
-    } catch (error) {
+    } catch {
       message.error("Failed to fetch progress reports");
     }
   };
 
-  const uploadFilesToFirebase = async (files: any[]) => {
+  const uploadFilesToFirebase = async (files: UploadFile[]) => {
     const uploadPromises = files.map(async (file) => {
       // Ensure we have a proper file object
-      const fileObj = file.originFileObj || file;
+      // const fileObj = file.originFileObj || file;
+          const fileObj = "originFileObj" in file && file.originFileObj ? (file.originFileObj as File) : (file as unknown as File);
 
       // Generate a unique filename with timestamp
       const timestamp = Date.now();
@@ -91,75 +94,91 @@ const ResearcherFinanceReports = () => {
     return Promise.all(uploadPromises);
   };
 
-  const onFinish = async (values: any) => {
-    console.log("✅ onFinish TRIGGERED", values);
-    try {
-      // Validate required data
-      if (!researchId || !currentUser?.id) {
-        message.error("Missing research or user information");
-        return;
-      }
-
-      setLoading(true);
-      setUploading(true);
-
-      // Upload files to Firebase if any
-      let attachments: string[] = [];
-      if (fileList.length > 0) {
-        try {
-          attachments = await uploadFilesToFirebase(fileList);
-        } catch (uploadError) {
-          console.error("File upload failed:", uploadError);
-          message.error("Failed to upload attachments");
+  interface ProgressReportFormValues {
+    amountSpent: number;
+    report: string;
+    attachments?: UploadFile[];
+  }
+  
+  const onFinish = async (values: ProgressReportFormValues) => {
+      console.log("✅ onFinish TRIGGERED", values);
+      try {
+        // Validate required data
+        if (!researchId || !currentUser?.id) {
+          message.error("Missing research or user information");
           return;
         }
-      }
-
-      // Prepare payload with proper data types
-      const payload = {
-        researchId: researchId,
-        researcherId: currentUser.id,
-        amountSpent: Number(values.amountSpent), // Ensure number type
-        report: values.report,
-        attachments,
-      };
-
-      console.log("Submitting payload:", payload); // Debug log
-
-      // Submit report to backend
-      const response = await axios.post(
-        "http://localhost:4001/researcher/progress-reports",
-        payload,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
+  
+        setLoading(true);
+        setUploading(true);
+  
+        // Upload files to Firebase if any
+        let attachments: string[] = [];
+        if (fileList.length > 0) {
+          try {
+            attachments = await uploadFilesToFirebase(fileList);
+          } catch (uploadError) {
+            console.error("File upload failed:", uploadError);
+            message.error("Failed to upload attachments");
+            return;
+          }
         }
-      );
-
-      if (response.data.success) {
-        message.success("Progress report submitted successfully");
-        form.resetFields();
-        setFileList([]);
-        fetchReports();
-      } else {
-        message.error(response.data.message);
+  
+        // Prepare payload with proper data types
+        const payload = {
+          researchId: researchId,
+          researcherId: currentUser.id,
+          amountSpent: Number(values.amountSpent), // Ensure number type
+          report: values.report,
+          attachments,
+        };
+  
+        console.log("Submitting payload:", payload); // Debug log
+  
+        // Submit report to backend
+        const response = await axios.post(
+          "http://localhost:4001/researcher/progress-reports",
+          payload,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (response.data.success) {
+          message.success("Progress report submitted successfully");
+          form.resetFields();
+          setFileList([]);
+          fetchReports();
+        } else {
+          message.error(response.data.message);
+        }
+      } catch (error: unknown) {
+        console.error("Submission error:", error);
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "response" in error &&
+          typeof (error as { response?: { data?: { message?: string; error?: string } } }).response === "object"
+        ) {
+          const err = error as { response?: { data?: { message?: string; error?: string } } };
+          message.error(
+            err.response?.data?.message ||
+              err.response?.data?.error ||
+              "Failed to submit progress report"
+          );
+        } else {
+          message.error("Failed to submit progress report");
+        }
+      } finally {
+        setLoading(false);
+        setUploading(false);
       }
-    } catch (error: any) {
-      console.error("Submission error:", error);
-      message.error(
-        error.response?.data?.message ||
-          error.response?.data?.error ||
-          "Failed to submit progress report"
-      );
-    } finally {
-      setLoading(false);
-      setUploading(false);
-    }
-  };
+    };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: unknown) => {
     console.log("Failed:", errorInfo);
     message.error("Please fill all required fields correctly");
   };

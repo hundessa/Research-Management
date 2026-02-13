@@ -39,6 +39,7 @@ interface User {
   firstname: string;
   lastname: string;
   email?: string;
+  role: string;
 }
 
 const CoordinatorSingleResearchPage: React.FC = () => {
@@ -78,9 +79,14 @@ const CoordinatorSingleResearchPage: React.FC = () => {
             new Date(researchRes.data.defenseDate).toISOString().slice(0, 16)
           );
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error fetching data:", error);
-        setError(error.response?.data?.message || "Failed to load data");
+        // setError(error.response?.data?.message || "Failed to load data");
+        if (axios.isAxiosError(error)) {
+          setError(error.response?.data?.message || "Failed to load data");
+        } else {
+          setError("Failed to load data");
+        }
       } finally {
         setLoading(false);
       }
@@ -129,9 +135,14 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       );
 
       alert("Reviewers assigned and notified successfully.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to assign reviewers:", error);
-      setError(error.response?.data?.message || "Failed to assign reviewers");
+      // setError(error.response?.data?.message || "Failed to assign reviewers");
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || "Failed to assign reviewers");
+      } else {
+        setError("Failed to assign reviewers");
+      }
     } finally {
       setActionLoading(false);
     }
@@ -163,17 +174,17 @@ const CoordinatorSingleResearchPage: React.FC = () => {
         axios.post(
           "http://localhost:4001/coordinator-notifications",
           {
-            to: research.researcher.id,
-            message: `Your research "${research.researchTitle}" defense has been scheduled for ${new Date(defenseDate).toLocaleString()}.`,
+            to: research?.researcher.id,
+            message: `Your research "${research?.researchTitle}" defense has been scheduled for ${new Date(defenseDate).toLocaleString()}.`,
             researchId: id,
-            title: research.researchTitle,
+            title: research?.researchTitle,
             type: "defense_scheduled",
-            file: research.researchFile,
+            file: research?.researchFile,
             recipientRole: "researcher",
           }, 
           { withCredentials: true }
         ),
-        ...(research.reviewers?.map(reviewerId => 
+        ...(research?.reviewers?.map(reviewerId => 
           axios.post(
             "http://localhost:4001/coordinator-notifications",
             {
@@ -191,9 +202,14 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       ]);
 
       alert("Defense date set and notifications sent successfully.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to set defense date:", error);
-      setError(error.response?.data?.message || "Failed to set defense date");
+      // setError(error.response?.data?.message || "Failed to set defense date");
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || "Failed to set defense date");
+      } else {
+        setError("Failed to set defense date");
+      }
     } finally {
       setActionLoading(false);
     }
@@ -231,9 +247,14 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       );
 
       alert("Evaluations accepted and researcher notified.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to accept evaluations:", error);
-      setError(error.response?.data?.message || "Failed to accept evaluations");
+      // setError(error.response?.data?.message || "Failed to accept evaluations");
+       if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || "Failed to accept evaluations");
+      } else {
+        setError("Failed to accept evaluations");
+      }
     } finally {
       setActionLoading(false);
     }
@@ -275,9 +296,14 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       );
 
       alert("Evaluations rejected and reviewers notified.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to reject evaluations:", error);
-      setError(error.response?.data?.message || "Failed to reject evaluations");
+      // setError(error.response?.data?.message || "Failed to reject evaluations");
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || "Failed to reject evaluations");
+      } else {
+        setError("Failed to reject evaluations");
+      }
     } finally {
       setActionLoading(false);
     }

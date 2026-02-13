@@ -45,7 +45,7 @@ const FinanceFinanceRequests = () => {
         }
       );
       setRequests(response.data.data);
-    } catch (error) {
+    } catch {
       message.error("Failed to fetch finance requests");
     } finally {
       setLoading(false);
@@ -181,7 +181,7 @@ const FinanceFinanceRequests = () => {
                 month: "short",
                 day: "numeric",
               });
-        } catch (e) {
+        } catch {
           return "Invalid Date";
         }
       },

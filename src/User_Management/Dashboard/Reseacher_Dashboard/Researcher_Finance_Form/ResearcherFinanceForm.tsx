@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "../Navigations/ResearcherSideNavbar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
+interface ResearcherFinanceFormProps {
+  ResearchId?: string | number;
+}
 interface FormData {
   amount: string;
   purpose: string;
@@ -33,9 +37,9 @@ interface FinanceRequest {
   };
 }
 
-const ResearcherFinanceForm = () => {
+const ResearcherFinanceForm = (_props: ResearcherFinanceFormProps) => {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({

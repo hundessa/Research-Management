@@ -220,7 +220,7 @@ const ResearcherSingleResearchPage = () => {
             setFinanceRequest(financeRes.data.data[0]);
             // No need to fetch progress reports just to show/hide the button
           }
-        } catch (financeError) {
+        } catch {
           console.log("No finance request found");
         }
       } catch (error) {

@@ -50,9 +50,16 @@ const ReviewerSingleResearch: React.FC = () => {
         });
         console.log("Fetched research:", res.data);
         setResearch(res.data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error fetching research detail:", error);
-        setError(error.response?.data?.message || "Failed to load research details");
+        // setError(error.response?.data?.message || "Failed to load research details");
+        if (axios.isAxiosError(error) && error.response?.data?.message) {
+          setError(error.response.data.message);
+        } else if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("Failed to load research details");
+        }
       } finally {
         setLoading(false);
       }
@@ -83,10 +90,17 @@ const ReviewerSingleResearch: React.FC = () => {
       setResearch(response.data.research);
       alert("Evaluation submitted successfully");
       setEvaluation(0);
-    } catch (error: any) {
+    } catch (err: unknown) {
       console.error("Error submitting evaluation:", error);
-      const errorMessage =
-        error.response?.data?.message || "Failed to submit evaluation";
+      // const errorMessage =
+      //   error.response?.data?.message || "Failed to submit evaluation";
+      let errorMessage = "Failed to submit evaluation";
+       if (axios.isAxiosError(err) && err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
       setError(errorMessage);
       alert(errorMessage);
     }
@@ -187,7 +201,7 @@ const ReviewerSingleResearch: React.FC = () => {
                 <div>
                   <p className="font-semibold">
                     Pre-Defense Average Score:{" "}
-                    {research.averagePreDefenseScore !== null
+                    {research.averagePreDefenseScore !== undefined && research.averagePreDefenseScore !== null
                       ? research.averagePreDefenseScore.toFixed(2)
                       : "Not yet evaluated"}
                   </p>
@@ -211,7 +225,7 @@ const ReviewerSingleResearch: React.FC = () => {
                 <div>
                   <p className="font-semibold">
                     Post-Defense Average Score:{" "}
-                    {research.averagePostDefenseScore !== null
+                    {research.averagePostDefenseScore !== undefined && research.averagePostDefenseScore !== null
                       ? research.averagePostDefenseScore.toFixed(2)
                       : "Not yet evaluated"}
                   </p>
@@ -315,7 +329,7 @@ const ReviewerSingleResearch: React.FC = () => {
                     <p className="text-yellow-600">
                       Post-defense evaluation will be available after the
                       defense date has passed:{" "}
-                      {new Date(research.defenseDate).toLocaleString()}.
+                      {research.defenseDate ? new Date(research.defenseDate).toLocaleString() : "Unknown"}.
                     </p>
                   )}
               </div>

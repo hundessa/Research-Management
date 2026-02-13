@@ -35,9 +35,13 @@ const DeanDashboard: React.FC = () => {
           console.warn("Researches data is not an array, defaulting to empty array");
           setResearches([]);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching dashboard data:", err);
-        setError(err.message || "Failed to load research data");
+        setError(
+          typeof err === "object" && err !== null && "message" in err
+            ? (err as { message?: string }).message || "Failed to load data"
+            : "Failed to load data"
+        );
         setResearches([]); // Ensure researches is an array even on error
       } finally {
         setLoading(false);
@@ -59,9 +63,16 @@ const DeanDashboard: React.FC = () => {
           r._id === researchId ? { ...r, status: action === "accept" ? "accepted" : "rejected" } : r
         )
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Error ${action}ing research:`, err);
-      alert(`Failed to ${action} research: ${err.message || "Unknown error"}`);
+      // alert(`Failed to ${action} research: ${err.message || "Unknown error"}`);
+      alert(
+        `Failed to ${action}: ${
+          typeof err === "object" && err !== null && "message" in err
+            ? (err as { message?: string }).message
+            : "Unknown error"
+        }`
+      );
     }
   };
 

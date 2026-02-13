@@ -36,6 +36,9 @@ const DirectorateResearchesList: React.FC = () => {
       })();
     }, []);
 
+    if (!research) {
+      return <div>Loading...</div>;
+    }
 
     return (
       <>
