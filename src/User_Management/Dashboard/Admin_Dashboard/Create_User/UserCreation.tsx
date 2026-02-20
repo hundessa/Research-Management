@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import SideNavBar from "../../../../components/Side_Nav_Bar/SideNavBar";
-import axios from "axios";
+import API from "../../../../api/axios";
 
 const UserCreation: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false); // 👈 Track visibility
@@ -29,7 +29,7 @@ const UserCreation: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post("http://localhost:4001/signup", {
+      const response = await API.post("/signup", {
         firstname,
         lastname,
         email,

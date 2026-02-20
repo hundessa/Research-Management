@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button, Form, Input, Upload, message, Card, Table, Tag, UploadFile } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "../Navigations/ResearcherSideNavbar";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 import { useParams } from "react-router-dom";
+import API from "../../../../api/axios";
 
 const { TextArea } = Input;
 // const storage = getStorage(app);
@@ -50,8 +50,8 @@ const ResearcherFinanceReports = () => {
   const fetchFinances = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://localhost:4001/researcher/finance-requests",
+      const response = await API.get(
+        "/researcher/finance-requests",
         { withCredentials: true }
       );
       setFinances(response.data.data);
@@ -66,8 +66,8 @@ const ResearcherFinanceReports = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4001/researcher/progress-reports",
+      const response = await API.get(
+        "/researcher/progress-reports",
         { withCredentials: true }
       );
       setReports(response.data.data);
@@ -136,8 +136,8 @@ const ResearcherFinanceReports = () => {
         console.log("Submitting payload:", payload); // Debug log
   
         // Submit report to backend
-        const response = await axios.post(
-          "http://localhost:4001/researcher/progress-reports",
+        const response = await API.post(
+          "/researcher/progress-reports",
           payload,
           {
             withCredentials: true,

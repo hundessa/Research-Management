@@ -3,7 +3,7 @@ import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import DirectorateSideNavBar from "../Navigation/DirectorateSideNavBar";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../../../api/axios";
 
 
 
@@ -23,8 +23,8 @@ const DirectorateUsersList: React.FC = () => {
          useEffect(() => {
            (async () => {
              try {
-               const response = await axios.get<UsersItem[]>(
-                 "http://localhost:4001/admin-users-list"
+               const response = await API.get<UsersItem[]>(
+                 "/admin-users-list"
                );
                setUsers(response.data);
              } catch (error) {

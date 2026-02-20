@@ -3,8 +3,8 @@ import Header from "../../../../components/Header_Nav_Bar/Header";
 import DeanSideNavBar from "../Navigations/DeanSideNavBar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaTrashAlt } from "react-icons/fa";
+import API from "../../../../api/axios";
 
 
 interface ResearchItem {
@@ -23,8 +23,8 @@ const DeanResearchesList: React.FC = () => {
       useEffect(() => {
         (async () => {
           try {
-            const response = await axios.get<ResearchItem[]>(
-              "http://localhost:4001/dean/researches-list",
+            const response = await API.get<ResearchItem[]>(
+              "/dean/researches-list",
               // { role: "Admin" },
               // { withCredentials: true }
             );

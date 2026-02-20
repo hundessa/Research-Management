@@ -152,12 +152,12 @@
 // export default ResearcherSingleResearchPage;
 
 
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Descriptions, Tag } from "antd";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "../Navigations/ResearcherSideNavbar";
+import API from "../../../../api/axios";
 
 interface Research {
   _id: string;
@@ -204,15 +204,15 @@ const ResearcherSingleResearchPage = () => {
         setLoading(true);
 
         // 1. Fetch research details
-        const researchRes = await axios.get(
-          `http://localhost:4001/researcher/researches-list/${researchId}`
+        const researchRes = await API.get(
+          `/researcher/researches-list/${researchId}`
         );
         setResearch(researchRes.data.data);
 
         // 2. Fetch finance request (if exists)
         try {
-          const financeRes = await axios.get(
-            `http://localhost:4001/researcher/finance-requests`,
+          const financeRes = await API.get(
+            `/researcher/finance-requests`,
             { params: { researchId } }
           );
 

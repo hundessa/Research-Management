@@ -5,7 +5,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import { HiUserAdd } from "react-icons/hi";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../../../api/axios";
 
 
 interface UsersItem {
@@ -28,7 +28,7 @@ const UsersList: React.FC = () => {
     useEffect(() => {
       (async () => {
         try {
-          const response = await axios.get<UsersItem[]>("http://localhost:4001/admin-users-list");
+          const response = await API.get<UsersItem[]>("/admin-users-list");
             setUsers(response.data)
         } catch (error) {
           console.log("error: ", error);

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, FormEvent, useEffect } from "react";
-import axios from "axios";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "../Navigations/ResearcherSideNavbar";
 import { useLocation } from "react-router-dom";
+import API from "../../../../api/axios";
 
 interface ResearcherFinanceFormProps {
   ResearchId?: string | number;
@@ -67,8 +67,8 @@ const ResearcherFinanceForm = (_props: ResearcherFinanceFormProps) => {
     const fetchCurrentResearch = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user") || "{}");
-        const response = await axios.get(
-          `http://localhost:4001/researcher/researches-list?researcherId=${user.id}`
+        const response = await API.get(
+          `/researcher/researches-list?researcherId=${user.id}`
         );
 
         if (response.data.data?.length > 0) {
@@ -87,8 +87,8 @@ const ResearcherFinanceForm = (_props: ResearcherFinanceFormProps) => {
 
   const fetchResearchDetails = async (id: string) => {
     try {
-      const response = await axios.get(
-        `http://localhost:4001/researcher/researches-list/${id}`
+      const response = await API.get(
+        `/researcher/researches-list/${id}`
       );
       setResearchTitle(response.data.data.researchTitle);
     } catch (error) {
@@ -99,8 +99,8 @@ const ResearcherFinanceForm = (_props: ResearcherFinanceFormProps) => {
   const fetchFinanceRequests = async (researchId: string) => {
     try {
       setLoadingRequests(true);
-      const response = await axios.get(
-        `http://localhost:4001/researcher/finance-requests?researchId=${researchId}`
+      const response = await API.get(
+        `/researcher/finance-requests?researchId=${researchId}`
       );
       setFinanceRequests(response.data.data);
     } catch (error) {
@@ -170,13 +170,13 @@ const ResearcherFinanceForm = (_props: ResearcherFinanceFormProps) => {
         },
       };
 
-      await axios.post(
-        "http://localhost:4001/researcher/finance-submit",
+      await API.post(
+        "/researcher/finance-submit",
         requestData
       );
 
       try {
-        await axios.post("http://localhost:4001/researcher-notifications", {
+        await API.post("/researcher-notifications", {
           from: researcherId,
           to: "directorate",
           recipientRole: "directorate",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import CoordinatorSideNavBar from "../Navigation/CoordinatorSideNavBar";
+import API from "../../../../api/axios";
 
 
 type Notification = {
@@ -19,9 +20,8 @@ const CoordinatorNotification: React.FC = () => {
         useEffect(() => {
           const fetchNotifications = async () => {
             try {
-              const res = await fetch("http://localhost:4001/coordinator-notifications");
-              const data = await res.json();
-              setNotifications(data);
+              const res = await API.get("/coordinator-notifications");
+              setNotifications(res.data);
             } catch (error) {
               console.error("Failed to fetch notifications:", error);
             } finally {

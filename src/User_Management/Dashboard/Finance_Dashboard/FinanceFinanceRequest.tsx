@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Table, message, Tag, Card } from "antd";
 import Header from "../../../components/Header_Nav_Bar/Header";
 import FinanceSideNavBar from "./FinanceSideNavBar";
+import API from "../../../api/axios";
 
 interface FinanceRequest {
   _id: string;
@@ -38,8 +38,8 @@ const FinanceFinanceRequests = () => {
   const fetchFinanceRequests = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://localhost:4001/finance/finance-requests",
+      const response = await API.get(
+        "/finance/finance-requests",
         {
           withCredentials: true,
         }

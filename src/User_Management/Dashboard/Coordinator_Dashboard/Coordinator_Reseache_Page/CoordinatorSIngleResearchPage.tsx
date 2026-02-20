@@ -4,6 +4,7 @@ import CoordinatorSideNavBar from "../Navigation/CoordinatorSideNavBar";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import API from "../../../../api/axios";
 
 interface Researchers {
   name: string;
@@ -60,10 +61,10 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       try {
         setLoading(true);
         const [researchRes, usersRes] = await Promise.all([
-          axios.get(`http://localhost:4001/coordinator-researches-list/${id}`, {
+          API.get(`/coordinator-researches-list/${id}`, {
             withCredentials: true,
           }),
-          axios.get("http://localhost:4001/coordinator-users-list", {
+          API.get("/coordinator-users-list", {
             withCredentials: true,
           }),
         ]);
@@ -104,8 +105,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
     try {
       setActionLoading(true);
       setError(null);
-      const response = await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${id}`,
+      const response = await API.patch(
+        `/coordinator-researches-list/${id}`,
         {
           status: "underreview",
           reviewers: selectedReviewers,
@@ -118,8 +119,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       // Notify reviewers
       await Promise.all(
         selectedReviewers.map((reviewerId) =>
-          axios.post(
-            "http://localhost:4001/coordinator-notifications",
+          API.post(
+            "/coordinator-notifications",
             {
               to: reviewerId,
               message: `You have been assigned to review the research titled "${research.researchTitle}".`,
@@ -157,8 +158,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
     try {
       setActionLoading(true);
       setError(null);
-      const response = await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${id}/defense-date`,
+      const response = await API.patch(
+        `/coordinator-researches-list/${id}/defense-date`,
         { defenseDate: new Date(defenseDate).toISOString() },
         { withCredentials: true }
       );
@@ -171,8 +172,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
 
       // Notify researcher and reviewers
       await Promise.all([
-        axios.post(
-          "http://localhost:4001/coordinator-notifications",
+        API.post(
+          "/coordinator-notifications",
           {
             to: research?.researcher.id,
             message: `Your research "${research?.researchTitle}" defense has been scheduled for ${new Date(defenseDate).toLocaleString()}.`,
@@ -185,8 +186,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
           { withCredentials: true }
         ),
         ...(research?.reviewers?.map(reviewerId => 
-          axios.post(
-            "http://localhost:4001/coordinator-notifications",
+          API.post(
+            "/coordinator-notifications",
             {
               to: reviewerId,
               message: `The defense for research "${research.researchTitle}" has been scheduled for ${new Date(defenseDate).toLocaleString()}.`,
@@ -223,8 +224,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setError(null);
       
       // Update status to "pre-defense-reviewed"
-      const response = await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${id}/accept-evaluations`,
+      const response = await API.patch(
+        `/coordinator-researches-list/${id}/accept-evaluations`,
         { status: "pre-defense-reviewed" },
         { withCredentials: true }
       );
@@ -232,8 +233,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setResearch(response.data.research);
 
       // Notify researcher
-      await axios.post(
-        "http://localhost:4001/coordinator-notifications",
+      await API.post(
+        "/coordinator-notifications",
         {
           to: research.researcher.id,
           message: `All evaluations for your research "${research.researchTitle}" have been accepted by the coordinator.`,
@@ -268,8 +269,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setError(null);
       
       // Update status to "evaluations-rejected"
-      const response = await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${id}/reject-evaluations`,
+      const response = await API.patch(
+        `/coordinator-researches-list/${id}/reject-evaluations`,
         { status: "evaluations-rejected" },
         { withCredentials: true }
       );
@@ -279,8 +280,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       // Notify reviewers
       await Promise.all(
         research.reviewers?.map(reviewerId =>
-          axios.post(
-            "http://localhost:4001/coordinator-notifications",
+          API.post(
+            "/coordinator-notifications",
             {
               to: reviewerId,
               message: `Your evaluations for research "${research.researchTitle}" have been rejected by the coordinator. Please review and resubmit.`,
@@ -299,7 +300,7 @@ const CoordinatorSingleResearchPage: React.FC = () => {
     } catch (error: unknown) {
       console.error("Failed to reject evaluations:", error);
       // setError(error.response?.data?.message || "Failed to reject evaluations");
-      if (axios.isAxiosError(error)) {
+       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "Failed to reject evaluations");
       } else {
         setError("Failed to reject evaluations");
@@ -316,8 +317,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setIsMakingDecision(true);
       setError(null);
 
-      const response = await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${id}/decision`,
+      const response = await API.patch(
+        `/coordinator-researches-list/${id}/decision`,
         {
           status: "accepted",
           decisionComment:
@@ -329,8 +330,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setResearch(response.data.research);
 
       // Send notification to researcher
-      await axios.post(
-        "http://localhost:4001/coordinator-notifications",
+      await API.post(
+        "/coordinator-notifications",
         {
           to: research.researcher.id,
           recipientRole: "researcher",
@@ -358,8 +359,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setIsMakingDecision(true);
       setError(null);
 
-      const response = await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${id}/decision`,
+      const response = await API.patch(
+        `/coordinator-researches-list/${id}/decision`,
         {
           status: "rejected",
           decisionComment: decisionComment || "Research needs revisions",
@@ -370,8 +371,8 @@ const CoordinatorSingleResearchPage: React.FC = () => {
       setResearch(response.data.research);
 
       // Send notification to researcher
-      await axios.post(
-        "http://localhost:4001/coordinator-notifications",
+      await API.post(
+        "/coordinator-notifications",
         {
           to: research.researcher.id,
           recipientRole: "researcher",

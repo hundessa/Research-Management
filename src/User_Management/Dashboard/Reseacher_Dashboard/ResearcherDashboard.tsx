@@ -165,10 +165,10 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaUpload, FaList, FaMoneyCheckAlt, FaBell } from "react-icons/fa";
 import Header from "../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "./Navigations/ResearcherSideNavbar";
+import API from "../../../api/axios";
 
 interface ResearchItem {
   _id: string;
@@ -204,15 +204,15 @@ const ResearcherDashboard: React.FC = () => {
       try {
         setLoading(true);
         // Fetch researches
-        const researchRes = await axios.get(
-          `http://localhost:4001/researcher/researches-list?researcherId=${researcherId}`,
+        const researchRes = await API.get(
+          `/researcher/researches-list?researcherId=${researcherId}`,
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
         setResearch(researchRes.data.data.reverse());
 
         // Fetch finance requests
-        const financeRes = await axios.get(
-          `http://localhost:4001/researcher/finance-requests?researcherId=${researcherId}`,
+        const financeRes = await API.get(
+          `/researcher/finance-requests?researcherId=${researcherId}`,
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
         setFinanceRequests(financeRes.data.data);

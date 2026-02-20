@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import DirectorateSideNavBar from "../Navigation/DirectorateSideNavBar";
+import API from "../../../../api/axios";
 
 
 type Notification = {
@@ -19,11 +20,11 @@ const DirectorateNotification: React.FC = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:4001/directorate-notifications"
+        const res = await API.get(
+          "/directorate-notifications"
         );
 
-        const data = await res.json();
+        const data = res.data;
         setNotifications(data);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);

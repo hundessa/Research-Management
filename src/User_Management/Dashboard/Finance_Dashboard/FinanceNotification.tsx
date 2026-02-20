@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import FinanceSideNavBar from "./FinanceSideNavBar";
 import Header from "../../../components/Header_Nav_Bar/Header";
+import API from "../../../api/axios";
 
 
 type Notification = {
@@ -19,11 +20,11 @@ const FinanceNotification: React.FC = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:4001/finance-notifications"
+        const res = await API.get(
+          "/finance-notifications"
         );
 
-        const data = await res.json();
+        const data = await res.data;
         setNotifications(data);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);

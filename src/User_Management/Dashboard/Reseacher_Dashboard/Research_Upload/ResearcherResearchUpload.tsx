@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import ResearcherSideNavBar from "../Navigations/ResearcherSideNavbar";
-import axios from "axios";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import API from "../../../../api/axios";
 
 const ResearcherResearchUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -94,8 +94,8 @@ if (storedUser) {
             },
           };
 
-          const response = await axios.post(
-            "http://localhost:4001/research-upload",
+          const response = await API.post(
+            "/research-upload",
             formData
           );
           const { message } = response.data;

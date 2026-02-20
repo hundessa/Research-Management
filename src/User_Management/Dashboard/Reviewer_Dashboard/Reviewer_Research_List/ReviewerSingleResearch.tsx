@@ -3,6 +3,7 @@ import Header from "../../../../components/Header_Nav_Bar/Header";
 import ReviewerSideNavBar from "../Navigation/ReviewerSideNavBar";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import API from "../../../../api/axios";
 
 interface Researchers {
   name: string;
@@ -45,7 +46,7 @@ const ReviewerSingleResearch: React.FC = () => {
     (async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:4001/reviewer-research/${id}`, {
+        const res = await API.get(`/reviewer-research/${id}`, {
           withCredentials: true,
         });
         console.log("Fetched research:", res.data);
@@ -76,8 +77,8 @@ const ReviewerSingleResearch: React.FC = () => {
       setError(null);
       console.log("Submitting evaluation:", { researchId: id, reviewerId, score: evaluation, evaluationType });
 
-      const response = await axios.put(
-        `http://localhost:4001/reviewer-research/${id}/evaluation`,
+      const response = await API.put(
+        `/reviewer-research/${id}/evaluation`,
         {
           score: evaluation,
           reviewerId,
@@ -91,7 +92,7 @@ const ReviewerSingleResearch: React.FC = () => {
       alert("Evaluation submitted successfully");
       setEvaluation(0);
     } catch (err: unknown) {
-      console.error("Error submitting evaluation:", error);
+      console.error("Error submitting evaluation:", err);
       // const errorMessage =
       //   error.response?.data?.message || "Failed to submit evaluation";
       let errorMessage = "Failed to submit evaluation";

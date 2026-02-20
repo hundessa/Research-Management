@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import DeanSideNavBar from "../Navigations/DeanSideNavBar";
+import API from "../../../../api/axios";
 
 
 type Notification = {
@@ -19,8 +20,8 @@ const DeanNotification: React.FC = () => {
     useEffect(() => {
       const fetchNotifications = async () => {
         try {
-          const res = await fetch("http://localhost:4001/dean/notifications");
-          const data = await res.json();
+          const res = await API.get("/dean/notifications");
+          const data = res.data;
           setNotifications(data);
         } catch (error) {
           console.error("Failed to fetch notifications:", error);

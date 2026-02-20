@@ -4,6 +4,7 @@ import { Table, Button, message, Tag, Space, Card } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import DirectorateSideNavBar from "../Navigation/DirectorateSideNavBar";
+import API from "../../../../api/axios";
 
 interface FinanceRequest {
   _id: string;
@@ -40,7 +41,7 @@ const DirectorateFinanceRequests = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:4001/directorate/finance-requests",
+        "https://research-management.onrender.com/directorate/finance-requests",
         {
           withCredentials: true,
         }
@@ -61,14 +62,14 @@ const DirectorateFinanceRequests = () => {
     try {
       setActionLoading(true);
       await axios.patch(
-        `http://localhost:4001/directorate/finance-requests/${requestId}/approve`,
+        `https://research-management.onrender.com/directorate/finance-requests/${requestId}/approve`,
         {},
         { withCredentials: true }
       );
       message.success("Finance request approved and sent to finance team");
 
       try {
-        await axios.post("http://localhost:4001/directorate-notifications", {
+        await axios.post("https://research-management.onrender.com/directorate-notifications", {
           to: "finance",
           recipientRole: "finance",
           message: `New finance request approved for research: ${researchTitle}`,
@@ -97,19 +98,19 @@ const DirectorateFinanceRequests = () => {
   ) => {
     try {
       setActionLoading(true);
-      await axios.patch(
-        `http://localhost:4001/directorate/finance-requests/${requestId}/reject`,
+      await API.patch(
+        `/directorate/finance-requests/${requestId}/reject`,
         {},
         { withCredentials: true }
       );
       message.success("Finance request rejected");
 
       try {
-        await axios.post("http://localhost:4001/directorate-notifications", {
+        await API.post("/directorate-notifications", {
           to: researcherId,
           recipientRole: "researcher",
-          message: `New finance request approved for research: ${researchTitle}`,
-          title: "Finance Request Approval",
+          message: `New finance request rejected for research: ${researchTitle}`,
+          title: "Finance Request Rejection",
           type: "finance_request",
           researchId: researchId,
         });

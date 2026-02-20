@@ -4,7 +4,7 @@ import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../../../api/axios";
 
 
 interface ResearchItem {
@@ -31,8 +31,8 @@ const ReviewerResearchList: React.FC = () => {
     }
       (async () => {
         try {
-          const response = await axios.get<ResearchItem[]>(
-            `http://localhost:4001/reviewer-researches/${reviewerId}`
+          const response = await API.get<ResearchItem[]>(
+            `/reviewer-researches/${reviewerId}`
             // { role: "Admin" },
             // { withCredentials: true }
           );

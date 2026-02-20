@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaFileAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import DeanSideNavBar from "./Navigations/DeanSideNavBar";
 import Header from "../../../components/Header_Nav_Bar/Header";
+import API from "../../../api/axios";
 
 interface Research {
   _id: string;
@@ -25,7 +25,7 @@ const DeanDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const researchRes = await axios.get("http://localhost:4001/dean/researches-list", {
+        const researchRes = await API.get("/dean/researches-list", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         console.log("Research API response:", researchRes.data); // Debug log
@@ -53,8 +53,8 @@ const DeanDashboard: React.FC = () => {
   // Handle accept/reject research
   const handleResearchAction = async (researchId: string, action: "accept" | "reject") => {
     try {
-      await axios.patch(
-        `http://localhost:4001/api/dean/researches-list/${researchId}/${action}`,
+      await API.patch(
+        `/dean/researches-list/${researchId}/${action}`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

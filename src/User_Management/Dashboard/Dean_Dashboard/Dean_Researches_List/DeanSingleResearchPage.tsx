@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import DeanSideNavBar from "../Navigations/DeanSideNavBar";
+import API from "../../../../api/axios";
 
 
 interface Researchers {
@@ -28,9 +28,7 @@ const DeanSingleResearchPage: React.FC = () => {
     useEffect(() => {
       (async () => {
         try {
-          const res = await axios.get(
-            `http://localhost:4001/dean/researches-list/${id}`
-          );
+          const res = await API.get(`/dean/researches-list/${id}`);
           setResearch(res.data);
         } catch (error) {
           console.error("Error fetching research detail:", error);
@@ -44,7 +42,7 @@ const DeanSingleResearchPage: React.FC = () => {
 
       try {
         // Update research status
-        await axios.patch(`http://localhost:4001/dean/researches-list/${id}`, {
+        await API.patch(`/dean/researches-list/${id}`, {
           status: newStatus,
         });
 
@@ -52,7 +50,7 @@ const DeanSingleResearchPage: React.FC = () => {
 
         // If accepted, notify the dean
         if (newStatus === "pending") {
-          await axios.post("http://localhost:4001/dean/notifications", {
+          await API.post("/dean/notifications", {
             to: "coordinator", // or specific dean ID/email
             message: `A new research titled "${research.researchTitle}" has been accepted.`,
             // researchId: id,

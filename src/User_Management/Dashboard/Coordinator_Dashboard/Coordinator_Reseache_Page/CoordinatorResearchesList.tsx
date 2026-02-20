@@ -1,10 +1,10 @@
 import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import CoordinatorSideNavBar from "../Navigation/CoordinatorSideNavBar";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
+import API from "../../../../api/axios";
 
 
 interface ResearchItem {
@@ -23,10 +23,8 @@ const CoordinatorResearchesList: React.FC = () => {
     useEffect(() => {
       (async () => {
         try {
-          const response = await axios.get<ResearchItem[]>(
-            "http://localhost:4001/coordinator-researches-list"
-            // { role: "Admin" },
-            // { withCredentials: true }
+          const response = await API.get<ResearchItem[]>(
+            "/coordinator-researches-list"
           );
           setResearch(response.data.reverse());
         } catch (err) {

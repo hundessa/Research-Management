@@ -3,9 +3,9 @@ import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 // import { researches } from "../../../../assets/data/users";
 import SideNavBar from "../../../../components/Side_Nav_Bar/SideNavBar";
 import Header from "../../../../components/Header_Nav_Bar/Header";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../../../api/axios";
 
 interface ResearchItem {
   _id: string;
@@ -24,11 +24,7 @@ const AdminResearchesList: React.FC = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get<ResearchItem[]>(
-          "http://localhost:4001/admin-research-list",
-          // { role: "Admin" },
-          // { withCredentials: true }
-        );
+        const response = await API.get("/admin-research-list");
         setResearch(response.data.reverse());
       } catch (err) {
         console.log("error: ", err);

@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import CoordinatorSideNavBar from "../Navigation/CoordinatorSideNavBar";
+import API from "../../../../api/axios";
 // import { useNavigate } from "react-router-dom";
 
 interface UsersItem {
@@ -23,8 +23,8 @@ const CoordinatorUsersList: React.FC = () => {
      useEffect(() => {
        (async () => {
          try {
-           const response = await axios.get<UsersItem[]>(
-             "http://localhost:4001/coordinator-users-list"
+           const response = await API.get<UsersItem[]>(
+             "/coordinator-users-list"
            );
            setUsers(response.data);
          } catch (error) {

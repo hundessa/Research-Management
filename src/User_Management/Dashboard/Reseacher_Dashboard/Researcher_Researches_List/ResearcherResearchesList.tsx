@@ -5,7 +5,7 @@ import { HiChevronUpDown, HiPencil } from "react-icons/hi2";
 import { HiUpload } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../../../api/axios";
 
 interface ResearchItem {
   _id: string;
@@ -30,8 +30,8 @@ const ResearcherResearchesList: React.FC = () => {
           throw new Error("Researcher ID not found in localStorage");
         }
 
-        const response = await axios.get<ResearchItem[]>(
-          `http://localhost:4001/researcher/researches-list?researcherId=${researcherId}`,
+        const response = await API.get<ResearchItem[]>(
+          `/researcher/researches-list?researcherId=${researcherId}`,
         );
 
         // setResearch(response.data.data.reverse());

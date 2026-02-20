@@ -4,7 +4,7 @@ import DirectorateSideNavBar from "../Navigation/DirectorateSideNavBar";
 import Header from "../../../../components/Header_Nav_Bar/Header";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../../../../api/axios";
 
 
 interface ResearchItem {
@@ -24,8 +24,8 @@ const DirectorateResearchesList: React.FC = () => {
     useEffect(() => {
       (async () => {
         try {
-          const response = await axios.get<ResearchItem[]>(
-            "http://localhost:4001/admin-research-list"
+          const response = await API.get<ResearchItem[]>(
+            "/admin-research-list"
             // { role: "Admin" },
             // { withCredentials: true }
           );

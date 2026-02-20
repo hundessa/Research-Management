@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaUsers, FaFileAlt, FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaUserPlus } from "react-icons/fa";
 import CoordinatorSideNavBar from "./Navigation/CoordinatorSideNavBar";
 import Header from "../../../components/Header_Nav_Bar/Header";
+import API from "../../../api/axios";
 
 interface Reviewer {
   _id: string;
@@ -38,8 +38,8 @@ const CoordinatorDashboard: React.FC = () => {
       try {
         setLoading(true);
         // Fetch reviewers
-        const reviewersRes = await axios.get(
-          "http://localhost:4001/coordinator-users-list",
+        const reviewersRes = await API.get(
+          "/coordinator-users-list",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -54,7 +54,7 @@ const CoordinatorDashboard: React.FC = () => {
         }
 
         // Fetch researches
-        const researchesRes = await axios.get("http://localhost:4001/coordinator-researches-list", {
+        const researchesRes = await API.get("/coordinator-researches-list", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         if (Array.isArray(researchesRes.data.data)) {
@@ -82,8 +82,8 @@ const CoordinatorDashboard: React.FC = () => {
   // Assign reviewers
   const handleAssignReviewers = async (researchId: string, reviewerIds: string[]) => {
     try {
-      await axios.patch(
-        `http://localhost:4001/coordinator-researches-list/${researchId}/assign-reviewers`,
+      await API.patch(
+        `/coordinator-researches-list/${researchId}/assign-reviewers`,
         { reviewerIds },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -116,8 +116,8 @@ const CoordinatorDashboard: React.FC = () => {
   // Assign defense date
   const handleAssignDefenseDate = async (researchId: string, defenseDate: string) => {
     try {
-      await axios.patch(
-        `http://localhost:4001/coordinator/researches/${researchId}/defense-date`,
+      await API.patch(
+        `/coordinator/researches/${researchId}/defense-date`,
         { defenseDate },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -140,8 +140,8 @@ const CoordinatorDashboard: React.FC = () => {
   // Accept or reject research
   const handleResearchAction = async (researchId: string, action: "accept" | "reject") => {
     try {
-      await axios.patch(
-        `http://localhost:4001/coordinator/researches/${researchId}/${action}`,
+      await API.patch(
+        `/coordinator/researches/${researchId}/${action}`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

@@ -1,8 +1,17 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import io from "socket.io-client";
+import API from "../api/axios";
 
 // Create socket connection to the backend
-const socket = io("http://localhost:4001"); // adjust your backend URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4001";
+// const socket = io("https://research-management.onrender.com"); // adjust your backend URL
+const socket = io(API_URL);
+
+interface BackendNotification {
+  _id: string;
+  message: string;
+  timestamp: string;
+}
 
 type NotificationContextType = {
   notifications: Notification[];
@@ -36,14 +45,15 @@ export const NotificationProvider = ({
     // 1. Fetch stored notifications from backend
     const fetchNotifications = async () => {
       try {
-        const res = await fetch("http://localhost:4001/admin/notification"); // your route
-        const data = await res.json();
-        type BackendNotification = {
-          _id: string;
-          message: string;
-          timestamp: string;
-        };
-        const formatted = (data as BackendNotification[]).map((n) => ({
+        // const res = await fetch("https://research-management.onrender.com/admin/notification"); // your route
+        const res = await API.get<BackendNotification[]>("/admin/notification"); // your route
+        // const data = await res.json();
+        // type BackendNotification = {
+        //   _id: string;
+        //   message: string;
+        //   timestamp: string;
+        // };
+        const formatted = res.data.map((n) => ({
           id: n._id,
           title: "New Research Uploaded",
           content: n.message,
@@ -64,15 +74,24 @@ export const NotificationProvider = ({
     //     ...prevNotifications, // prepend new notifications
     //   ]);
     // });
-    socket.on(
-  "new-research-uploaded",
-  (notification: Notification) => {
-    setNotifications((prev) => [
-      notification,
-      ...prev,
-    ]);
-  }
-);
+//     socket.on(
+//   "new-research-uploaded",
+//   (notification: Notification) => {
+//     setNotifications((prev) => [
+//       notification,
+//       ...prev,
+//     ]);
+//   }
+// );
+socket.on("new-research-uploaded", (n: BackendNotification) => {
+  const formatted: Notification = {
+    id: n._id,
+    title: "New Research Uploaded",
+    content: n.message,
+    timestamp: new Date(n.timestamp),
+  };
+  setNotifications((prev) => [formatted, ...prev]);
+});
 
 
     return () => {
